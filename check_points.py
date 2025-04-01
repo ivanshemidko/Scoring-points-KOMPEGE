@@ -9,6 +9,7 @@ import time
 
 DEBUG = False
 SEE_BROWSER_ACTIONS = False
+OS_WINDOWS = True
 
 chrome_profile_path = r"C:\Users\gty65\AppData\Local\Google\Chrome\User Data" # ВАШ ПУТЬ ЗДЕСЬ
 profile_directory = "Default" # ВАШ ПРОФИЛЬ ЗДЕСЬ : СЕЙЧАС СТОИТ Default
@@ -38,7 +39,6 @@ def add_arguments(chrome_profile_path, profile_directory):
     options.add_experimental_option("excludeSwitches", ["enable-automation", "enable-logging"])
     options.add_argument("--log-level=3")
     
-    # Для Windows
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
@@ -49,9 +49,15 @@ def add_arguments(chrome_profile_path, profile_directory):
 def create_service():
     service = Service(
         ChromeDriverManager().install(),
+        service_args=['--silent']
+    )
+
+    if not OS_WINDOWS: return service
+
+    service = Service(
+        ChromeDriverManager().install(),
         service_args=['--silent'],
-        popen_kw={"creation_flags": 134217728}  # ВИНДА
-        # popen_kw={"startupinfo": None, "stdin": subprocess.DEVNULL} # Linux/Mac
+        popen_kw={"creation_flags": 134217728}
     )
 
     return service
